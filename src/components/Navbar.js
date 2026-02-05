@@ -17,7 +17,7 @@ export default function Navbar() {
   const { user, setUser } = useUser();
   useEffect(() => setMounted(true), []);
   const router = useRouter();
-  
+
   useEffect(() => {
     if (!mounted) return;
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -136,7 +136,9 @@ export default function Navbar() {
             <Link href="/" className="block px-3 py-2 text-base font-medium text-secondary hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>Beranda</Link>
             <Link href="/rooms" className="block px-3 py-2 text-base font-medium text-secondary hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>Kamar</Link>
             <Link href="/facilities" className="block px-3 py-2 text-base font-medium text-secondary hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>Fasilitas</Link>
-
+            {user && (
+              <Link href="/bookings" className="block px-3 py-2 text-base font-medium text-secondary hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>Pemesanan</Link>
+            )}
             <div className="pt-4 border-t border-gray-100">
               {user ? (
                 <div className="space-y-3">

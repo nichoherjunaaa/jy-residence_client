@@ -38,22 +38,22 @@ export default function Footer() {
                         <ul className="space-y-3 text-sm text-gray-400">
                             <li>
                                 <Link href="/" className="hover:text-accent transition">
-                                    Home
+                                    Beranda
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/rooms" className="hover:text-accent transition">
-                                    Our Rooms
+                                    Kamar
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/facilities" className="hover:text-accent transition">
-                                    Facilities
+                                    Fasilitas
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/bookings" className="hover:text-accent transition">
-                                    Bookings
+                                    Pemesanan
                                 </Link>
                             </li>
                         </ul>
