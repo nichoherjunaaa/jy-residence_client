@@ -76,54 +76,6 @@ export default function Home() {
             Temukan kenyamanan istirahat terbaik dengan pemandangan kota yang menakjubkan dan pelayanan kelas dunia.
           </p>
         </div>
-
-        {/* Booking Form */}
-        <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 z-20 px-4">
-          <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-8 border-t-4 border-accent">
-            <form className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-secondary uppercase tracking-wider">Check In</label>
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-accent transition">
-                  <CalendarCheck className="text-xl text-accent mr-2" />
-                  <input type="date" className="bg-transparent w-full text-primary focus:outline-none text-sm font-medium" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-secondary uppercase tracking-wider">Check Out</label>
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-accent transition">
-                  <CalendarX className="text-xl text-accent mr-2" />
-                  <input type="date" className="bg-transparent w-full text-primary focus:outline-none text-sm font-medium" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-secondary uppercase tracking-wider">Guests</label>
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-accent transition">
-                  <Users className="text-xl text-accent mr-2" />
-                  <select className="bg-transparent w-full text-primary focus:outline-none text-sm font-medium">
-                    <option>1 Guest</option>
-                    <option>2 Guests</option>
-                    <option>3 Guests</option>
-                    <option>4+ Guests</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <button
-                  type="button"
-                  onClick={checkAvailability}
-                  className="w-full bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition duration-300 shadow-md flex justify-center items-center gap-2"
-                >
-                  <span>Book Now</span>
-                  <ArrowRight weight="bold" />
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       </section>
 
       {/* Notification Area */}
