@@ -9,6 +9,14 @@ export const login = async (email, password) => {
         throw new Error(message);
     }
 };
+export const register = async (userData) => {
+    try {
+        const { data } = await apiClient.post(`/users/register`, userData);
+        return data;
+    } catch (error) {
+        throw error.response?.data?.message || "Registration failed. Please try again.";
+    }
+};
 
 export const getCurrentUser = async () => {
     try {

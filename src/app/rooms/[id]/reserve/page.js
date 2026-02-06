@@ -1,17 +1,13 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
-    LockKey,
-    UserCircle,
-    CheckCircle,
     Spinner,
     ArrowRight,
     ShieldCheck
 } from "@phosphor-icons/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { formatDate, formatIDR } from "@/helper/helper";
+import { formatIDR } from "@/helper/helper";
 import { getRoomById } from "@/app/api/room";
 import { useUser } from "@/app/context/userContext";
 import { getPaymentStatus } from "@/app/api/payment";
@@ -33,6 +29,7 @@ export default function BookingFormPage() {
     const [qrisUrl, setQrisUrl] = useState(null);
     const [currentOrderId, setCurrentOrderId] = useState(null);
 
+    // State untuk data form
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -41,21 +38,43 @@ export default function BookingFormPage() {
         requests: '',
     });
 
+    // State untuk pesan error validasi
+    const [errors, setErrors] = useState({});
+
     const id = params?.id;
     const checkin = useMemo(() => (searchParams.get('checkin') || '').replace(/[^0-9-]/g, ''), [searchParams]);
     const checkout = useMemo(() => (searchParams.get('checkout') || '').replace(/[^0-9-]/g, ''), [searchParams]);
     const guests = Number(searchParams.get('guest') || 1);
 
-    const isFormIncomplete = !formData.firstName || !formData.email || !formData.phone;
-
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     const imagePath = room?.images?.[0];
+    const imageUrl = imagePath ? `${baseUrl}${imagePath}` : "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=150";
 
+    // Fungsi Validasi Utama
+    const validateForm = () => {
+        let newErrors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^[0-9]{10,15}$/;
 
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = "Nama depan wajib diisi";
+        }
 
-    const imageUrl = imagePath
-        ? `${baseUrl}${imagePath}`
-        : "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=150";
+        if (!formData.email.trim()) {
+            newErrors.email = "Email wajib diisi";
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = "Format email tidak valid";
+        }
+
+        if (!formData.phone.trim()) {
+            newErrors.phone = "Nomor telepon wajib diisi";
+        } else if (!phoneRegex.test(formData.phone)) {
+            newErrors.phone = "Gunakan nomor telepon valid (10-15 digit)";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
         if (!loading && !user) {
@@ -120,11 +139,20 @@ export default function BookingFormPage() {
     }, [qrisUrl, showSuccessModal, currentOrderId, user?.token]);
 
     const handleInputChange = (e) => {
-        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        
+        // Hapus error saat user mulai mengetik kembali
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
     const processPayment = async () => {
-        if (isFormIncomplete) return alert("Harap lengkapi detail kontak!");
+        // Jalankan validasi sebelum memproses
+        if (!validateForm()) {
+            return; 
+        }
 
         setIsProcessing(true);
         try {
@@ -180,7 +208,12 @@ export default function BookingFormPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div className="lg:col-span-2 space-y-8">
 
-                        <ContactForm formData={formData} onChange={handleInputChange} />
+                        {/* Mengirim formData, handleInputChange, dan errors ke ContactForm */}
+                        <ContactForm 
+                            formData={formData} 
+                            onChange={handleInputChange} 
+                            errors={errors} 
+                        />
 
                         {qrisUrl && (
                             <div className="bg-white p-8 border-2 border-dashed border-accent rounded-xl flex flex-col items-center animate-in fade-in zoom-in duration-500">
@@ -194,12 +227,19 @@ export default function BookingFormPage() {
 
                         <button
                             onClick={processPayment}
-                            disabled={isProcessing || !breakdown || isFormIncomplete}
+                            disabled={isProcessing || !breakdown}
                             className="w-full bg-accent hover:bg-orange-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isProcessing ? <Spinner className="animate-spin" size={24} /> : `Pay ${formatIDR(breakdown?.grandTotal || 0)}`}
                             {!isProcessing && <ArrowRight size={24} />}
                         </button>
+                        
+                        {/* Menampilkan pesan error global jika form tidak valid saat klik */}
+                        {Object.keys(errors).length > 0 && (
+                            <p className="text-red-500 text-sm text-center font-medium">
+                                Mohon lengkapi formulir dengan benar sebelum melanjutkan.
+                            </p>
+                        )}
                     </div>
 
                     <div className="lg:col-span-1">

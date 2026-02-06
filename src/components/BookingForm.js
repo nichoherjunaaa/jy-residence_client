@@ -15,9 +15,6 @@ export default function BookingForm({
 
     const today = new Date().toISOString().split('T')[0];
 
-    // Validasi:
-    // 1. Tanggal check-in tidak boleh kurang dari hari ini
-    // 2. Tanggal check-out tidak boleh <= check-in
     const isCheckinInvalid = checkin < today;
     const isCheckoutInvalid = checkout <= checkin;
     const isDateInvalid = isCheckinInvalid || isCheckoutInvalid;

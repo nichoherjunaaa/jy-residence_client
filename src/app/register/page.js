@@ -15,10 +15,11 @@ import {
     Star,
     ArrowRight
 } from "@phosphor-icons/react";
+import { register } from "../api/auth";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
-        fullname: "",
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -31,27 +32,39 @@ export default function RegisterPage() {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setError("");
+        setStatus("idle");
 
         if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match.");
             return;
         }
 
+        if (formData.password.length < 6) {
+            setError("Password must be at least 6 characters.");
+            return;
+        }
+
         setLoading(true);
 
-        // Simulate API Call
-        setTimeout(() => {
+        try {
+            const { confirmPassword, ...payload } = formData;
+            const data = await register(payload);
+            console.log(data);
             setLoading(false);
             setStatus("success");
 
-            // Simulate Login immediately after register
             setTimeout(() => {
-                window.location.href = '/';
-            }, 1500);
-        }, 2000);
+                window.location.href = '/login';
+            }, 2000);
+
+        } catch (err) {
+            setLoading(false);
+            setStatus("idle");
+            setError(typeof err === 'string' ? err : "Something went wrong.");
+        }
     };
 
     return (
@@ -70,16 +83,16 @@ export default function RegisterPage() {
                     <form onSubmit={handleRegister} className="space-y-4">
 
                         <div className="space-y-1">
-                            <label htmlFor="fullname" className="text-sm font-semibold text-primary">Full Name</label>
+                            <label htmlFor="name" className="text-sm font-semibold text-primary">Full Name</label>
                             <div className="relative">
                                 <User size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" />
                                 <input
                                     type="text"
-                                    id="fullname"
+                                    id="name"
                                     className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition text-sm text-primary"
                                     placeholder="John Doe"
                                     required
-                                    value={formData.fullname}
+                                    value={formData.name}
                                     onChange={handleChange}
                                 />
                             </div>

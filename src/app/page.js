@@ -26,6 +26,7 @@ export default function Home() {
   const [rooms, setRooms] = useState([]);
   const [roomLoading, setRoomLoading] = useState(true);
   const { loading } = useUser();
+  
   useEffect(() => {
     const fetchRooms = async () => {
       try {
