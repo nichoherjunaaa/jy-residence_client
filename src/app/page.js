@@ -18,21 +18,34 @@ import {
 } from "@phosphor-icons/react";
 import { getRooms } from "./api/room";
 import CardRoom from "@/components/CardRoom";
+import { useUser } from "./context/userContext";
+import Loader from "@/components/Loader";
+
 export default function Home() {
   const [notification, setNotification] = useState(null);
   const [rooms, setRooms] = useState([]);
+  const [roomLoading, setRoomLoading] = useState(true);
+  const { loading } = useUser();
   useEffect(() => {
     const fetchRooms = async () => {
       try {
+        setRoomLoading(true);
         const data = await getRooms(3);
         setRooms(data);
       } catch (error) {
         console.log("Error fetching rooms:", error);
+      } finally {
+        setRoomLoading(false);
       }
     };
+    fetchRooms()
 
-    fetchRooms();
   }, []);
+
+  if (roomLoading) {
+    return <Loader fullScreen={true} />
+  }
+
   const checkAvailability = () => {
     // Simulation logic
     const isAvailable = Math.random() > 0.5;
@@ -41,7 +54,7 @@ export default function Home() {
       setNotification({
         type: 'success',
         title: 'Available!',
-        message: 'Room is ready for booking.'
+        message: 'Room is ready for bookinhg.'
       });
     } else {
       setNotification({
@@ -92,7 +105,7 @@ export default function Home() {
               <p className="text-secondary text-xs">{notification.message}</p>
             </div>
             <button onClick={() => setNotification(null)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-              <WarningCircle className="text-xl transform rotate-45" /> {/* Using as Close Icon approximation or import X */}
+              <WarningCircle className="text-xl transform rotate-45" />
             </button>
           </div>
         </div>
@@ -105,11 +118,11 @@ export default function Home() {
           <div className="w-24 h-1 bg-accent mx-auto"></div>
           <p className="text-secondary mt-4 max-w-2xl mx-auto">Pilih akomodasi yang sesuai dengan gaya liburan Anda.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
-            {/* Ocean Suite */}
-            {rooms.map((room) => (
-              <CardRoom key={room._id} room={room} />
-            ))}
-
+            {rooms.length > 0 ? (
+              rooms.map((room) => <CardRoom key={room._id} room={room} />)
+            ) : (
+              <p>No rooms available.</p>
+            )}
           </div>
         </div>
       </section>
